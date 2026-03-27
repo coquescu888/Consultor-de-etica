@@ -36,11 +36,14 @@ if prompt := st.chat_input("¿Cuál es tu dilema?"):
 
     with st.chat_message("assistant"):
         try:
-            # USAMOS EL MODELO MÁS COMPATIBLE DEL MUNDO
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # CAMBIO CLAVE: Usamos gemini-pro (la versión más compatible de todas)
+            model = genai.GenerativeModel('gemini-pro')
+            
+            # Pasamos la instrucción y el prompt como una lista
             response = model.generate_content([prompt_sistema, prompt])
             
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
+            
         except Exception as e:
             st.error(f"Error: {e}")
