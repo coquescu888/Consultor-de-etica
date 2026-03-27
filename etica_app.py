@@ -9,9 +9,17 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # --- CONFIGURACIÓN DE API ---
-# RECUERDA PONER TU LLAVE AQUÍ:
-mi_llave = "TU_LLAVE_AQUÍ" 
-genai.configure(api_key=mi_llave)
+# --- CONFIGURACIÓN DE SEGURIDAD INTELIGENTE ---
+try:
+    # Primero intenta buscar en la nube (Streamlit Cloud)
+    if "GOOGLE_API_KEY" in st.secrets:
+        genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+    else:
+        # Si no hay secretos (estás en tu Mac), usa tu llave directa
+        genai.configure(api_key="TU_LLAVE_REAL_AQUÍ")
+except Exception:
+    # Si falla la búsqueda de secretos por completo, usa tu llave directa
+    genai.configure(api_key="TU_LLAVE_REAL_AQUÍ")
 
 # --- BARRA LATERAL: ACADEMIA DE ATENAS Y GLOSARIO ---
 st.sidebar.title("🏛️ Academia de Atenas")
