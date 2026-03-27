@@ -8,26 +8,6 @@ st.set_page_config(page_title="Ética Clásica UNAM", page_icon="🏛️", layou
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- DISEÑO Y FONDO KANDINSKY (CSS) ---
-st.markdown("""
-<style>
-.stApp {
-    background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Vassily_Kandinsky%2C_1913_-_Composition_VII.jpg/1200px-Vassily_Kandinsky%2C_1913_-_Composition_VII.jpg");
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-}
-.stApp::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(255, 255, 255, 0.92); 
-    z-index: -1;
-}
-h1, h2, h3 { color: #1a3a5a; font-family: 'Helvetica Neue', sans-serif; }
-</style>
-""", unsafe_allow_html=True)
-
 # --- CONFIGURACIÓN DE API ---
 # RECUERDA PONER TU LLAVE AQUÍ:
 mi_llave = "TU_LLAVE_AQUÍ" 
