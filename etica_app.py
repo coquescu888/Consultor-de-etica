@@ -64,7 +64,7 @@ else:
     st.sidebar.info("**Aponía:** Sin dolor físico.\n\n**Ataraxia:** Sin angustia mental.")
 
 # Configurar modelo
-model = genai.GenerativeModel(model_name="models/gemini-2.5-flash", system_instruction=instruccion)
+model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest", system_instruction=instruccion)
 
 # --- CUERPO PRINCIPAL ---
 st.title("🏛️ Consultor de Ética Clásica")
