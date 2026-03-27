@@ -55,7 +55,7 @@ else:
 # --- CONFIGURACIÓN DEL MODELO (ESTO ES LO QUE ARREGLA EL NOTFOUND) ---
 # Usamos el nombre técnico completo que la librería de la nube sí reconoce
 model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-flash-latest", 
+    model_name="models/gemini-1.5-flash", 
     system_instruction=instruccion
 )
 
