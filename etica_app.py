@@ -60,7 +60,7 @@ else:
 # --- CONFIGURACIÓN DEL MODELO (CORREGIDO) ---
 # Agregamos 'models/' al inicio, que es lo que pide la nube
 model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-flash", 
+    model_name="models/gemini-1.5-pro", 
     system_instruction=instruccion
 )
 
