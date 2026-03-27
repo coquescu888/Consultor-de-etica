@@ -29,12 +29,11 @@ h1, h2, h3 { color: #1a3a5a; font-family: 'Helvetica Neue', sans-serif; }
 """, unsafe_allow_html=True)
 
 # --- CONFIGURACIÓN DE SEGURIDAD ---
-# Esta es la forma correcta de manejar la llave para que no falle en la nube
 if "GOOGLE_API_KEY" in st.secrets:
     api_key = st.secrets["GOOGLE_API_KEY"]
 else:
-    # Llave para uso local en tu Mac (pon la tuya aquí)
-    api_key = "TU_LLAVE_AQUI"
+    # Deja esto vacío o con un mensaje genérico
+    api_key = "PON_TU_LLAVE_AQUI_SOLO_LOCAL"
 
 genai.configure(api_key=api_key)
 
