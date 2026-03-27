@@ -21,21 +21,21 @@ st.markdown("""
     content: "";
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(255, 255, 255, 0.92); 
+    background-color: rgba(255, 255, 255, 0.94); 
     z-index: -1;
 }
 h1, h2, h3 { color: #1a3a5a; font-family: 'Helvetica Neue', sans-serif; }
 </style>
 """, unsafe_allow_html=True)
 
-# --- CONFIGURACIÓN DE SEGURIDAD ---
-if "GOOGLE_API_KEY" in st.secrets:
+# --- CONFIGURACIÓN DE API ---
+# Intentamos obtener la llave de los secretos de Streamlit
+try:
     api_key = st.secrets["GOOGLE_API_KEY"]
-else:
-    # Deja esto vacío o con un mensaje genérico
-    api_key = "PON_TU_LLAVE_AQUI_SOLO_LOCAL"
-
-genai.configure(api_key=api_key)
+    genai.configure(api_key=api_key)
+except Exception:
+    st.error("⚠️ No se encontró la llave 'GOOGLE_API_KEY' en los Secrets de Streamlit.")
+    st.stop()
 
 # --- BARRA LATERAL ---
 st.sidebar.title("🏛️ Academia de Atenas")
@@ -44,23 +44,16 @@ escuela = st.sidebar.selectbox(
     ["Aristotelismo (Liceo)", "Estoicismo (Stoa)", "Epicureísmo (El Jardín)"]
 )
 
-st.sidebar.markdown("---")
-st.sidebar.subheader(f"📚 Glosario: {escuela}")
-
 if escuela == "Aristotelismo (Liceo)":
-    instruccion = "Eres un maestro del Liceo de Aristóteles. Responde basado en la Eudaimonía y el Justo Medio."
-    st.sidebar.info("**Eudaimonía:** Florecimiento humano.\n\n**Frónesis:** Sabiduría práctica.")
+    instruccion = "Eres un maestro del Liceo de Aristóteles. Responde con sabiduría práctica y el concepto de eudaimonía."
 elif escuela == "Estoicismo (Stoa)":
-    instruccion = "Eres un filósofo estoico. Responde basado en lo que depende de nosotros y la Ataraxia."
-    st.sidebar.info("**Ataraxia:** Paz mental.\n\n**Logos:** Razón universal.")
+    instruccion = "Eres un filósofo estoico. Responde basado en la virtud, la razón y lo que podemos controlar."
 else:
-    instruccion = "Eres un filósofo de Epicuro. Responde basado en la ausencia de dolor y el placer estable."
-    st.sidebar.info("**Aponía:** Sin dolor físico.\n\n**Ataraxia:** Sin angustia mental.")
+    instruccion = "Eres un filósofo epicúreo. Responde buscando la ataraxia y el placer racional."
 
-# --- CONFIGURACIÓN DEL MODELO (CORREGIDO) ---
-# Agregamos 'models/' al inicio, que es lo que pide la nube
+# Inicializar el modelo con la instrucción seleccionada
 model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-pro", 
+    model_name="gemini-1.5-flash", 
     system_instruction=instruccion
 )
 
@@ -71,36 +64,34 @@ st.markdown(f"Escuela activa: **{escuela}**")
 col_dilema, col_respuesta = st.columns([1, 2])
 
 with col_dilema:
-    st.subheader("Dilema Actual")
+    st.subheader("Tu Dilema")
     user_messages = [m for m in st.session_state.messages if m["role"] == "user"]
     if user_messages:
-        st.info(f"🤔 **Tu pregunta:**\n\n{user_messages[-1]['content']}")
-    else:
-        st.write("Aún no has planteado un dilema.")
-
+        st.info(f"🤔 **Última pregunta:**\n\n{user_messages[-1]['content']}")
+    
     st.markdown("---")
-    with st.expander("📖 Referencias Académicas"):
-        st.write("* Ética a Nicómaco (Aristóteles)")
-        st.write("* Meditaciones (Marco Aurelio)")
-        st.write("* Carta a Meneceo (Epicuro)")
+    with st.expander("📖 Referencias"):
+        st.write("* Ética a Nicómaco")
+        st.write("* Meditaciones")
+        st.write("* Carta a Meneceo")
 
 with col_respuesta:
-    st.subheader("Reflexión Filosófica")
-    
+    # Mostrar historial
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
+    # Entrada de chat
     if prompt := st.chat_input("Plantea tu dilema aquí..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
         
         with st.chat_message("assistant"):
-            with st.spinner("Pensando..."):
-                try:
-                    response = model.generate_content(prompt)
-                    st.markdown(response.text)
-                    st.session_state.messages.append({"role": "assistant", "content": response.text})
-                except Exception as e:
-                    st.error(f"Hubo un error con la IA: {e}")
+            with st.spinner("Los filósofos están deliberando..."):
+                # Aquí dejamos que el error aparezca si algo falla
+                response = model.generate_content(prompt)
+                st.markdown(response.text)
+                st.session_state.messages.append({"role": "assistant", "content": response.text})
         
         st.rerun()
