@@ -52,8 +52,10 @@ else:
     instruccion = "Eres un filósofo epicúreo. Responde buscando la ataraxia y el placer racional."
 
 # Inicializar el modelo con la instrucción seleccionada
+# --- CONFIGURACIÓN DEL MODELO (ESTO ES LO QUE ARREGLA EL NOTFOUND) ---
+# Usamos el nombre técnico completo que la librería de la nube sí reconoce
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash", 
+    model_name="models/gemini-1.5-flash-latest", 
     system_instruction=instruccion
 )
 
