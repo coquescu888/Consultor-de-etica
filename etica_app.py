@@ -1,59 +1,46 @@
 import streamlit as st
 import google.generativeai as genai
 
-# 1. CONFIGURACIÓN
-st.set_page_config(page_title="Ética Clásica", page_icon="🏛️", layout="wide")
+# 1. Configuración básica
+st.set_page_config(page_title="Ética Clásica", layout="wide")
+
+# 2. Estilo visual rápido
+st.markdown("<style>.stApp { background-color: #f0f2f6; }</style>", unsafe_allow_html=True)
+
+# 3. Conexión con Google (Simplificada al máximo)
+if "GOOGLE_API_KEY" not in st.secrets:
+    st.error("Por favor, configura GOOGLE_API_KEY en los Secrets de Streamlit.")
+    st.stop()
+
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+
+# 4. Selección de Escuela
+st.sidebar.title("🏛️ Academia")
+escuela = st.sidebar.selectbox("Escuela:", ["Aristóteles", "Estoicos", "Epicuro"])
+prompt_sistema = f"Eres un filósofo de la escuela {escuela}. Responde de forma breve y académica."
+
+# 5. Chat
+st.title("🏛️ Consultor de Ética")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- CONFIGURACIÓN DE API ---
-if "GOOGLE_API_KEY" in st.secrets:
-    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-else:
-    st.error("Falta la llave en Secrets")
-    st.stop()
+for m in st.session_state.messages:
+    with st.chat_message(m["role"]):
+        st.markdown(m["content"])
 
-# --- BARRA LATERAL ---
-st.sidebar.title("🏛️ Academia de Atenas")
-escuela = st.sidebar.selectbox(
-    "Selecciona la Escuela:",
-    ["Aristotelismo (Liceo)", "Estoicismo (Stoa)", "Epicureísmo (El Jardín)"]
-)
-
-# Definir la instrucción según la escuela
-if escuela == "Aristotelismo (Liceo)":
-    inst = "Eres Aristóteles. Responde con el Justo Medio."
-elif escuela == "Estoicismo (Stoa)":
-    inst = "Eres un Estoico. Responde sobre lo que puedes controlar."
-else:
-    inst = "Eres Epicuro. Responde sobre la ataraxia."
-
-# --- CUERPO PRINCIPAL ---
-st.title("🏛️ Consultor de Ética Clásica")
-
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-if prompt := st.chat_input("Plantea tu dilema..."):
+if prompt := st.chat_input("¿Cuál es tu dilema?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        # CONFIGURACIÓN DEL MODELO JUSTO ANTES DE USARLO
-        # Esta es la forma más compatible con la versión v1beta
         try:
-            model = genai.GenerativeModel(
-                model_name="gemini-1.5-flash",
-                system_instruction=inst
-            )
-            response = model.generate_content(prompt)
+            # USAMOS EL MODELO MÁS COMPATIBLE DEL MUNDO
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content([prompt_sistema, prompt])
             
-            if response.text:
-                st.markdown(response.text)
-                st.session_state.messages.append({"role": "assistant", "content": response.text})
+            st.markdown(response.text)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
-            st.error(f"Error de Google: {e}")
-            st.info("Intenta cambiar el nombre del modelo a 'models/gemini-1.5-flash' en el código si esto persiste.")
+            st.error(f"Error: {e}")
