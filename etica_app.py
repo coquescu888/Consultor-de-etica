@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 # 1. CONFIGURACIÓN DE LA PÁGINA (Debe ser lo primero)
-st.set_page_config(page_title="Ética Clásica UNAM", page_icon="🏛️", layout="wide")
+st.set_page_config(page_title="Ética Clásica Coque", page_icon="🏛️", layout="wide")
 
 # 2. INICIALIZACIÓN DEL ESTADO (Para evitar el AttributeError)
 if "messages" not in st.session_state:
@@ -46,6 +46,7 @@ model = genai.GenerativeModel(model_name="models/gemini-2.5-flash", system_instr
 
 # --- CUERPO PRINCIPAL ---
 st.title("🏛️ Consultor de Ética Clásica")
+st.markdown("Bienvenido. Plantea tu dilema desde Ética de la Virtud.")
 st.markdown(f"Escuela activa: **{escuela}**")
 
 col_dilema, col_respuesta = st.columns([1, 2])
